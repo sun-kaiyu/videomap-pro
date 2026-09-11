@@ -1,0 +1,9 @@
+{
+  "name": "Default",
+  "layers": [
+    { "id": "layer-1", "opacity": 1, "intensity": 1, "scaleX": 100, "scaleY": 100, "posX": 0, "posY": 0, "rotationZ": 0 },
+    { "id": "layer-2", "opacity": 1, "intensity": 1, "scaleX": 100, "scaleY": 100, "posX": 0, "posY": 0, "rotationZ": 0 },
+    { "id": "layer-3", "opacity": 1, "intensity": 1, "scaleX": 100, "scaleY": 100, "posX": 0, "posY": 0, "rotationZ": 0 }
+  ],
+  "_comment": "示例附加数据文件，打包后位于 <安装目录>/resources/presets/default-preset.json"
+}

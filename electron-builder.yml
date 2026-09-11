@@ -1,0 +1,135 @@
+# electron-builder 打包配置
+# 官方文档：https://www.electron.build/configuration
+# 使用方式：npm run build:win   （内部调用 electron-builder --win --config electron-builder.yml）
+
+appId: com.arkaos.videomappro
+productName: VideoMap Pro
+copyright: Copyright © 2026 Arkaos
+
+# ---------------------------------------------------------------------------
+# 目录约定
+# ---------------------------------------------------------------------------
+directories:
+  output: release          # 产物输出目录
+  buildResources: build    # 图标等构建资源目录（icon.ico / installer.nsh 放这里）
+
+# ---------------------------------------------------------------------------
+# 入口与参与打包的文件
+# 这些文件会被打进 app.asar（只读、被压缩）
+# 入口由 package.json 的 "main": "dist-electron/main.js" 指定
+# ---------------------------------------------------------------------------
+files:
+  - dist/**/*              # Vite 产出的渲染进程（index.html + assets）
+  - dist-electron/**/*     # vite-plugin-electron 产出的主进程 + preload
+  - package.json
+  - build/icon.ico         # 窗口标题栏 / 任务栏图标（运行时从 asar 内读取）
+  # ---- 排除项：减小体积、避免源码泄漏 ----
+  - "!src/**/*"
+  - "!electron/**/*"
+  - "!release/**/*"
+  - "!resources/**/*"
+  - "!scripts/**/*"
+  - "!**/*.map"
+  - "!**/*.md"
+  - "!**/*.log"
+
+# ---------------------------------------------------------------------------
+# asar 归档
+# ---------------------------------------------------------------------------
+asar: true                 # 把 app 目录打成单个 app.asar，减少文件数与启动耗时
+asarUnpack:                # 必须从 asar 中解包出来的文件（原生模块/二进制必须解包才能被系统加载）
+  - "**/*.node"
+  - "**/*.dll"
+
+# ---------------------------------------------------------------------------
+# 附加数据文件（不进 asar，位于 <安装目录>/resources/<to>/）
+# 运行时用 process.resourcesPath 访问，适合：配置、ffmpeg、模型、图片素材、预置预设
+# ---------------------------------------------------------------------------
+extraResources:
+  - from: resources/config
+    to: config
+    filter:
+      - "**/*"
+  - from: resources/ffmpeg
+    to: ffmpeg
+    filter:
+      - "**/*"
+  - from: resources/presets
+    to: presets
+    filter:
+      - "**/*"
+
+# ---------------------------------------------------------------------------
+# Windows 平台
+# ---------------------------------------------------------------------------
+win:
+  icon: build/icon.ico     # 必须是 .ico，建议内含 16/32/48/64/128/256 多尺寸
+  target:
+    # ① 带安装向导的安装包（推荐给最终用户）
+    - target: nsis
+      arch:
+        - x64
+    # ② 单文件便携版（免安装、可放 U 盘）
+    - target: portable
+      arch:
+        - x64
+    # ③ 目录分发压缩包（解压即用，便于内网分发/免管理员）
+    - target: zip
+      arch:
+        - x64
+  # ---- 代码签名（强烈建议，可显著降低杀软误报与 SmartScreen 拦截）----
+  # certificateFile: cert/code-sign.pfx
+  # certificatePassword: "%CSC_KEY_PASSWORD%"      # 从环境变量读取，禁止硬编码
+  # signingHashAlgorithms:
+  #   - sha256
+  # timestampingServerUrl: http://timestamp.digicert.com
+
+# ---------------------------------------------------------------------------
+# ① NSIS 安装向导
+# ---------------------------------------------------------------------------
+nsis:
+  oneClick: false                        # false = 显示向导；true = 一键静默安装
+  perMachine: false                      # 当前用户安装，无需管理员权限
+  allowElevation: true                   # 需要时允许提权
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: VideoMap Pro
+  uninstallDisplayName: "${productName} ${version}"
+  deleteAppDataOnUninstall: false         # 卸载时保留用户数据（谨慎设为 true）
+  runAfterFinish: true
+  language: "2052"                        # 2052 = 简体中文
+  displayLanguageSelector: true
+  installerLanguages:
+    - zh_CN
+    - en_US
+  requestedExecutionLevel: asInvoker      # 不请求管理员，避免 UAC 弹窗
+  artifactName: "${productName}-Setup-${version}.${ext}"
+  include: build/installer.nsh            # 自定义 NSIS 宏（可选）
+
+# ---------------------------------------------------------------------------
+# ② 便携版（单文件 exe）
+# ---------------------------------------------------------------------------
+portable:
+  artifactName: "${productName}-${version}-portable.${ext}"
+
+# ---------------------------------------------------------------------------
+# ③ zip 目录分发
+# ---------------------------------------------------------------------------
+zip:
+  artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
+
+# ---------------------------------------------------------------------------
+# 体积与构建优化
+# ---------------------------------------------------------------------------
+compression: maximum       # maximum | normal | store；maximum 体积最小、打包最慢
+npmRebuild: false          # 无原生模块时关闭，显著加快打包
+removePackageScripts: true # 移除产物 package.json 中的 scripts，避免泄漏开发脚本
+
+# ---------------------------------------------------------------------------
+# 自动更新（可选，需配合 electron-updater）
+# ---------------------------------------------------------------------------
+# publish:
+#   provider: github
+#   owner: your-org
+#   repo: videomap-pro
