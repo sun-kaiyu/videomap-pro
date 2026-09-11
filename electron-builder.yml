@@ -93,7 +93,6 @@ nsis:
   allowElevation: true                   # 需要时允许提权
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
-  createStartMenuShortcut: true
   shortcutName: VideoMap Pro
   uninstallDisplayName: "${productName} ${version}"
   deleteAppDataOnUninstall: false         # 卸载时保留用户数据（谨慎设为 true）
@@ -103,7 +102,6 @@ nsis:
   installerLanguages:
     - zh_CN
     - en_US
-  requestedExecutionLevel: asInvoker      # 不请求管理员，避免 UAC 弹窗
   artifactName: "${productName}-Setup-${version}.${ext}"
   include: build/installer.nsh            # 自定义 NSIS 宏（可选）
 
@@ -112,12 +110,6 @@ nsis:
 # ---------------------------------------------------------------------------
 portable:
   artifactName: "${productName}-${version}-portable.${ext}"
-
-# ---------------------------------------------------------------------------
-# ③ zip 目录分发
-# ---------------------------------------------------------------------------
-zip:
-  artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
 
 # ---------------------------------------------------------------------------
 # 体积与构建优化
