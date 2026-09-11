@@ -1,16 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAppStore } from '../store/useAppStore'
 
 export function OutputView({ layerId }: { layerId: string }) {
   const layers = useAppStore(s => s.layers)
   const layer = layers.find(l => l.id === layerId)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [command, setCommand] = useState<{ command: string; payload: any } | null>(null)
 
   useEffect(() => {
     if (!window.electronAPI) return
     const unsub = window.electronAPI.onOutputCommand((data: any) => {
-      setCommand(data)
       if (data.command === 'play' && videoRef.current) videoRef.current.play().catch(() => {})
       if (data.command === 'pause' && videoRef.current) videoRef.current.pause()
       if (data.command === 'stop' && videoRef.current) {

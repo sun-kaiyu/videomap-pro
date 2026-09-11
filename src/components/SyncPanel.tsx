@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '../store/useAppStore'
-import { ArrowRightIcon, ArrowLeftIcon, ServerIcon, TrashIcon, RefreshCwIcon } from '@heroicons/react/24/solid'
+import { ArrowRightIcon, ArrowLeftIcon, ServerIcon } from '@heroicons/react/24/solid'
 
 export function SyncPanel() {
   const syncFiles = useAppStore(s => s.syncFiles)

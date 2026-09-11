@@ -5,7 +5,6 @@ import {
   PlayIcon,
   PauseIcon,
   StopIcon,
-  XMarkIcon,
   EyeIcon,
   ArrowPathIcon,
   ArrowsPointingOutIcon,
