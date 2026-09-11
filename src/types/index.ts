@@ -69,4 +69,4 @@ export interface MappingSurface {
   fullscreen: boolean
 }
 
-export type PanelTab = 'general' | 'parameters' | 'mapping' | 'transfer' | 'encoder' | 'remote'
+export type PanelTab = 'general' | 'parameters' | 'cue' | 'mapping' | 'transfer' | 'encoder' | 'remote'

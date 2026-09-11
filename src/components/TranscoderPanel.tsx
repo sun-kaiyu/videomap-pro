@@ -23,7 +23,7 @@ export function TranscoderPanel() {
   const addFiles = async () => {
     if (!window.electronAPI) return
     const paths = await window.electronAPI.selectVideo()
-    const newFiles = []
+    const newFiles: { path: string; name: string; duration: number }[] = []
     for (const path of paths) {
       const info = await window.electronAPI.getVideoInfo(path)
       newFiles.push({ path, name: path.split(/[\\/]/).pop() || path, duration: info.duration })
